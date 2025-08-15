@@ -3,7 +3,7 @@ defmodule Api.Repo.Migrations.CreateRoomMembers do
 
   def change do
     create table(:room_members) do
-      add :ecnr_room_key, :binary
+      add :encr_room_key, :binary
       add :room_id, references(:rooms, on_delete: :nothing)
       add :user_id, references(:users, on_delete: :nothing)
 

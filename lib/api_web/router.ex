@@ -1,12 +1,40 @@
 defmodule ApiWeb.Router do
   use ApiWeb, :router
+  alias ApiWeb.Plugs
 
   pipeline :api do
+    plug CORSPlug,
+      origin: ["http://localhost:1420"],
+      credentials: true
+
     plug :accepts, ["json"]
+    plug Plugs.DeviceID
+  end
+
+  pipeline :protected do
+    plug Plugs.Protected
   end
 
   scope "/api", ApiWeb do
     pipe_through :api
+
+    options "/*path", OptionsController, :options
+
+    get "/auth/verify", AuthController, :verify_session
+    post "/auth/login", AuthController, :login
+    post "/auth/signup", AuthController, :signup
+    delete "/auth/logout", AuthController, :logout
+
+    pipe_through :protected
+
+    get "/rooms/show/:id", RoomsController, :show
+    get "/rooms/my", RoomsController, :get_my_rooms
+    post "/rooms", RoomsController, :create
+
+    post "/room_members", RoomMembersController, :create
+
+    get "/users/:name", UsersController, :show
+    get "/users/find/:query", UsersController, :find_user
   end
 
   # Enable LiveDashboard in development

@@ -5,7 +5,6 @@ defmodule Api.Users do
 
   import Ecto.Query, warn: false
   alias Api.Repo
-
   alias Api.Users.User
 
   @doc """
@@ -19,6 +18,12 @@ defmodule Api.Users do
   """
   def list_users do
     Repo.all(User)
+  end
+
+  def find_users(name) do
+    name = "%" <> name <> "%"
+    query = from u in User, where: like(u.name, ^name)
+    Repo.all(query)
   end
 
   @doc """
@@ -36,6 +41,11 @@ defmodule Api.Users do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id)
+
+  def get_user_by_name(name) do
+    Repo.get_by(User, name: name)
+  end
 
   @doc """
   Creates a user.
@@ -50,9 +60,11 @@ defmodule Api.Users do
 
   """
   def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+    user_data =
+      %User{}
+      |> User.register_changeset(attrs)
+
+    Repo.insert(user_data)
   end
 
   @doc """
@@ -71,6 +83,29 @@ defmodule Api.Users do
     user
     |> User.changeset(attrs)
     |> Repo.update()
+  end
+
+  def update_user_public_key(user_id, new_public_key) do
+    User
+    |> where(id: ^user_id)
+    |> Repo.update_all(set: [public_key: new_public_key])
+  end
+
+  @doc """
+  Checks if user exists by name.
+
+  ## Examples
+
+      iex> exists?(name)
+      true
+
+      iex> exists?(name)
+      false
+
+  """
+  def exists?(name) do
+    query = from u in User, where: u.name == ^name
+    Repo.exists?(query)
   end
 
   @doc """
@@ -100,5 +135,9 @@ defmodule Api.Users do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  def verify_password(%User{password_hash: hash}, password) when is_binary(password) do
+    Argon2.verify_pass(password, hash)
   end
 end

@@ -2,8 +2,13 @@ defmodule Api.RoomMembers.RoomMember do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {
+    Jason.Encoder,
+    only: [:id, :encr_room_key, :room_id, :user_id, :inserted_at, :updated_at]
+  }
+
   schema "room_members" do
-    field :ecnr_room_key, :binary
+    field :encr_room_key, :binary
     field :room_id, :id
     field :user_id, :id
 
@@ -13,7 +18,7 @@ defmodule Api.RoomMembers.RoomMember do
   @doc false
   def changeset(room_member, attrs) do
     room_member
-    |> cast(attrs, [:ecnr_room_key])
-    |> validate_required([:ecnr_room_key])
+    |> cast(attrs, [:room_id, :user_id, :encr_room_key])
+    |> validate_required([:encr_room_key])
   end
 end

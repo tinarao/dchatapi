@@ -7,13 +7,23 @@ defmodule Api.RoomsFixtures do
   @doc """
   Generate a room.
   """
-  def room_fixture(attrs \\ %{}) do
+  def room_fixture() do
+    attrs = %{}
+
     {:ok, room} =
       attrs
       |> Enum.into(%{
         is_private: true,
         name: "some name"
       })
+      |> Api.Rooms.create_room()
+
+    room
+  end
+
+  def room_fixture(attrs) do
+    {:ok, room} =
+      attrs
       |> Api.Rooms.create_room()
 
     room

@@ -9,7 +9,7 @@ config :api, Api.Repo,
   username: System.get_env("POSTGRES_USERNAME"),
   password: System.get_env("POSTGRES_PASSWORD"),
   hostname: "localhost",
-  database: System.get_env("POSTGRES_DB") <> System.get_env("MIX_TEST_PARTITION"),
+  database: "#{System.get_env("POSTGRES_DB")}#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: System.schedulers_online() * 2
 
@@ -25,3 +25,5 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :api, Api.Tokens, encryption_key: "test_secret_key_for_testing_purposes_only_12345"

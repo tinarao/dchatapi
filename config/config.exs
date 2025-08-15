@@ -11,6 +11,11 @@ config :api,
   ecto_repos: [Api.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :api, Api.Tokens,
+  # encryption_key: System.get_env("SECRET") || "MZYTrtQAw3JRhGCTecWPFbynO7SH2tMKVGSGe6r2GYLjx/mrngDOhEOaOjv1w+F"
+  encryption_key:
+    {:system, "SECRET", "MZYTrtQAw3JRhGCTecWPFbynO7SH2tMKVGSGe6r2GYLjx/mrngDOhEOaOjv1w+F"}
+
 # Configures the endpoint
 config :api, ApiWeb.Endpoint,
   url: [host: "localhost"],

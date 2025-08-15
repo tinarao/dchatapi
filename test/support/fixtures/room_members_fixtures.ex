@@ -7,11 +7,24 @@ defmodule Api.RoomMembersFixtures do
   @doc """
   Generate a room_member.
   """
-  def room_member_fixture(attrs \\ %{}) do
+  def room_member_fixture() do
+    attrs = %{}
+
     {:ok, room_member} =
       attrs
       |> Enum.into(%{
-        ecnr_room_key: "some ecnr_room_key"
+        encr_room_key: "some encr_room_key"
+      })
+      |> Api.RoomMembers.create_room_member()
+
+    room_member
+  end
+
+  def room_member_fixture(attrs) do
+    {:ok, room_member} =
+      attrs
+      |> Enum.into(%{
+        encr_room_key: "some encr_room_key"
       })
       |> Api.RoomMembers.create_room_member()
 

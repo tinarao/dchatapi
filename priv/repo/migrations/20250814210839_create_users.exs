@@ -3,9 +3,9 @@ defmodule Api.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :name, :string
-      add :bio, :string
-      add :picture_url, :string
+      add :name, :string, null: false
+      add :bio, :string, null: true
+      add :picture_url, :string, null: true
       add :password_hash, :string
       add :public_key, :string
 

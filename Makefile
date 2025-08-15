@@ -11,3 +11,9 @@ migrate:
 
 reset: 
 	@export $$(cat .env | xargs) && mix ecto.reset
+
+tests: docker
+	@export $$(cat .env | xargs) && mix test
+
+tests_trace: docker
+	@export $$(cat .env | xargs) && mix test --trace

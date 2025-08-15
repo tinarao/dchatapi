@@ -8,7 +8,7 @@ defmodule Api.RoomMembersTest do
 
     import Api.RoomMembersFixtures
 
-    @invalid_attrs %{ecnr_room_key: nil}
+    @invalid_attrs %{encr_room_key: nil}
 
     test "list_room_members/0 returns all room_members" do
       room_member = room_member_fixture()
@@ -21,10 +21,10 @@ defmodule Api.RoomMembersTest do
     end
 
     test "create_room_member/1 with valid data creates a room_member" do
-      valid_attrs = %{ecnr_room_key: "some ecnr_room_key"}
+      valid_attrs = %{encr_room_key: "some encr_room_key"}
 
       assert {:ok, %RoomMember{} = room_member} = RoomMembers.create_room_member(valid_attrs)
-      assert room_member.ecnr_room_key == "some ecnr_room_key"
+      assert room_member.encr_room_key == "some encr_room_key"
     end
 
     test "create_room_member/1 with invalid data returns error changeset" do
@@ -33,15 +33,20 @@ defmodule Api.RoomMembersTest do
 
     test "update_room_member/2 with valid data updates the room_member" do
       room_member = room_member_fixture()
-      update_attrs = %{ecnr_room_key: "some updated ecnr_room_key"}
+      update_attrs = %{encr_room_key: "some updated encr_room_key"}
 
-      assert {:ok, %RoomMember{} = room_member} = RoomMembers.update_room_member(room_member, update_attrs)
-      assert room_member.ecnr_room_key == "some updated ecnr_room_key"
+      assert {:ok, %RoomMember{} = room_member} =
+               RoomMembers.update_room_member(room_member, update_attrs)
+
+      assert room_member.encr_room_key == "some updated encr_room_key"
     end
 
     test "update_room_member/2 with invalid data returns error changeset" do
       room_member = room_member_fixture()
-      assert {:error, %Ecto.Changeset{}} = RoomMembers.update_room_member(room_member, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               RoomMembers.update_room_member(room_member, @invalid_attrs)
+
       assert room_member == RoomMembers.get_room_member!(room_member.id)
     end
 

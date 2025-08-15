@@ -21,6 +21,12 @@ defmodule Api.RoomMembers do
     Repo.all(RoomMember)
   end
 
+  def exists?(user_id, room_id) do
+    RoomMember
+    |> where([rm], rm.user_id == ^user_id and rm.room_id == ^room_id)
+    |> Repo.exists?()
+  end
+
   @doc """
   Gets a single room_member.
 
@@ -36,6 +42,7 @@ defmodule Api.RoomMembers do
 
   """
   def get_room_member!(id), do: Repo.get!(RoomMember, id)
+  def get_room_member(id), do: Repo.get(RoomMember, id)
 
   @doc """
   Creates a room_member.
@@ -53,6 +60,41 @@ defmodule Api.RoomMembers do
     %RoomMember{}
     |> RoomMember.changeset(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  Вызывается при создании комнаты.
+  Создаёт две записи, связанные с комнатой (двух участников комнаты)
+  """
+  def on_room_create(room_id, first_user_data, second_user_data) do
+    first_changeset = %{
+      room_id: room_id,
+      user_id: first_user_data.id,
+      encr_room_key: first_user_data.key
+    }
+
+    second_changeset = %{
+      room_id: room_id,
+      user_id: second_user_data.id,
+      encr_room_key: second_user_data.key
+    }
+
+    case Repo.transaction(fn ->
+           {:ok, member1} =
+             %RoomMember{}
+             |> RoomMember.changeset(first_changeset)
+             |> Repo.insert()
+
+           {:ok, member2} =
+             %RoomMember{}
+             |> RoomMember.changeset(second_changeset)
+             |> Repo.insert()
+
+           [member1, member2]
+         end) do
+      {:ok, members} -> {:ok, members}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   @doc """

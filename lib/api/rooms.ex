@@ -5,8 +5,8 @@ defmodule Api.Rooms do
 
   import Ecto.Query, warn: false
   alias Api.Repo
-
   alias Api.Rooms.Room
+  alias Api.RoomMembers
 
   @doc """
   Returns the list of rooms.
@@ -36,6 +36,46 @@ defmodule Api.Rooms do
 
   """
   def get_room!(id), do: Repo.get!(Room, id)
+
+  def get_room(id), do: Repo.get(Room, id)
+
+  @doc """
+  Returns a list of rooms created by user
+  """
+  def get_by_user_id(user_id) do
+    Room
+    |> where([r], r.creator_id == ^user_id)
+    |> preload(:creator)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns a list of rooms user joined
+  """
+  def get_my_rooms(user_id) do
+    RoomMembers.RoomMember
+    |> where([rm], rm.user_id == ^user_id)
+    |> preload([:room, :user])
+    |> Repo.all()
+  end
+
+  def can_user_access_this_room?(_user_id, room) when room.is_public, do: true
+  def can_user_access_this_room?(user_id, room) when room.creator_id === user_id, do: true
+
+  def can_user_access_this_room?(user_id, room) do
+    RoomMembers.exists?(user_id, room.id)
+  end
+
+  @doc """
+  Returns a list of rooms where user participates (as Room objects)
+  """
+  def get_rooms_user_participates_in(user_id) do
+    Room
+    |> join(:inner, [r], rm in RoomMembers.RoomMember, on: r.id == rm.room_id)
+    |> where([r, rm], rm.user_id == ^user_id)
+    |> preload([:creator])
+    |> Repo.all()
+  end
 
   @doc """
   Creates a room.

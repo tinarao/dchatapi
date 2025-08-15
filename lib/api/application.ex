@@ -10,6 +10,7 @@ defmodule Api.Application do
     children = [
       ApiWeb.Telemetry,
       Api.Repo,
+      Api.Redis,
       {DNSCluster, query: Application.get_env(:api, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Api.PubSub},
       # Start a worker by calling: Api.Worker.start_link(arg)
