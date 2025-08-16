@@ -45,4 +45,16 @@ defmodule ApiWeb.RoomMembersController do
         |> json(%{error: "непредвиденная ошибка сервера"})
     end
   end
+
+  def get_key_for(conn, %{"room_id" => room_id}) do
+    user = conn.assigns.current_user
+
+    case RoomMembers.get_by_ids(user.id, room_id) do
+      nil ->
+        conn |> put_status(404) |> json(%{error: "пользователь не состоит в комнате"})
+
+      %RoomMembers.RoomMember{} = room_data ->
+        conn |> put_status(200) |> json(%{key: room_data.encr_room_key})
+    end
+  end
 end

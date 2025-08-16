@@ -27,6 +27,12 @@ defmodule Api.RoomMembers do
     |> Repo.exists?()
   end
 
+  def get_by_ids(user_id, room_id) do
+    RoomMember
+    |> where([rm], rm.user_id == ^user_id and rm.room_id == ^room_id)
+    |> Repo.one()
+  end
+
   @doc """
   Gets a single room_member.
 

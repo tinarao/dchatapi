@@ -1,6 +1,8 @@
 defmodule Api.RoomMembers.RoomMember do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Api.Rooms
+  alias Api.Users
 
   @derive {
     Jason.Encoder,
@@ -9,8 +11,10 @@ defmodule Api.RoomMembers.RoomMember do
 
   schema "room_members" do
     field :encr_room_key, :binary
-    field :room_id, :id
-    field :user_id, :id
+    belongs_to :room, Rooms.Room
+    belongs_to :user, Users.User
+    # field :room_id, :id
+    # field :user_id, :id
 
     timestamps(type: :utc_datetime)
   end

@@ -1,6 +1,9 @@
 defmodule Api.Tokens do
   @encryption_key Application.compile_env!(:api, __MODULE__)[:encryption_key]
 
+  alias Api.Users
+  alias Api.Sessions
+
   def secret_key do
     case @encryption_key do
       {:system, _app, value} -> value
@@ -40,6 +43,17 @@ defmodule Api.Tokens do
     else
       _error ->
         {:error, "corrupted token"}
+    end
+  end
+
+  def get_user_from_token(token) do
+    with {:ok, _data} <- decrypt(token),
+         {:ok, session} <- Sessions.get_session(token),
+         user <- Users.get_user_by_name(session["user_name"]) do
+      {:ok, user}
+    else
+      _ ->
+        {:error, "пользователь не найден и/или токен невалиден"}
     end
   end
 
