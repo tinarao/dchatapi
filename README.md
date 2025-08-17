@@ -1,18 +1,86 @@
-# Api
+# дич.ат - сервер
 
-To start your Phoenix server:
+<p align="center">
+    <img src="https://skillicons.dev/icons?i=elixir" />
+</p>
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Серверная часть дич.ат
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+## Особенности системы
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+### Отказоустойчивость
 
-## Learn more
+- Распределенная архитектура на базе Elixir/OTP
+- Автоматическое восстановление после сбоев
+- Горизонтальное масштабирование
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+### Безопасность
+
+- Сквозное шифрование сообщений
+- Защищенное хранение данных
+- Безопасная аутентификация пользователей
+
+### Комнаты чата
+
+- Приватные комнаты с ограниченным доступом
+
+# Запуск
+
+### Docker Compose
+
+Проект поставляется с настроенным Docker Compose для быстрого развертывания:
+
+```yaml
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/dchat
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dchat
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+## Запуск проекта
+
+### Локальная разработка
+
+```bash
+# Установка зависимостей
+mix deps.get
+
+# Настройка базы данных
+mix ecto.setup
+
+# Запуск сервера
+mix phx.server
+```
+
+### Запуск через Docker Compose
+
+```bash
+# Сборка и запуск контейнеров
+docker-compose up -d
+
+# Просмотр логов
+docker-compose logs -f
+
+# Остановка
+docker-compose down
+```
+
+Сервер будет доступен по адресу `http://localhost:4000`
