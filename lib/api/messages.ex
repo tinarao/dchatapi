@@ -37,6 +37,19 @@ defmodule Api.Messages do
   """
   def get_message!(id), do: Repo.get!(Message, id)
 
+  def get_messages_by_room(room_id) do
+    Message
+    |> where([m], m.room_id == ^room_id)
+    |> preload([:user])
+    |> Repo.all()
+  end
+
+  def delete_all_by_chat(room_id) do
+    Message
+    |> where([m], m.room_id == ^room_id)
+    |> Repo.delete_all()
+  end
+
   @doc """
   Creates a message.
 

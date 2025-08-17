@@ -36,6 +36,8 @@ defmodule ApiWeb.Router do
 
     get "/users/:name", UsersController, :show
     get "/users/find/:query", UsersController, :find_user
+
+    delete "/messages/:room_id", MessagesController, :clear_history
   end
 
   # Enable LiveDashboard in development
