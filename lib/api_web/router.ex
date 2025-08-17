@@ -30,6 +30,7 @@ defmodule ApiWeb.Router do
     get "/rooms/show/:id", RoomsController, :show
     get "/rooms/my", RoomsController, :get_my_rooms
     post "/rooms", RoomsController, :create
+    delete "/rooms/:id", RoomsController, :delete
 
     get "/room_members/key/:room_id", RoomMembersController, :get_key_for
     post "/room_members", RoomMembersController, :create

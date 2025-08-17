@@ -54,4 +54,24 @@ defmodule ApiWeb.RoomsController do
         |> json(%{error: "не удалось создать комнату", description: reason})
     end
   end
+
+  def delete(conn, %{"id" => id}) do
+    user = conn.assigns.current_user
+
+    with %Rooms.Room{} = room <- Rooms.get_room(id),
+         true <- room.creator_id == user.id,
+         {:ok, _} <- Rooms.delete_room(room) do
+      conn |> put_status(200) |> json(%{message: "deleted"})
+    else
+      nil ->
+        conn |> put_status(404) |> json(%{error: "комната не найдена"})
+
+      false ->
+        conn |> put_status(403) |> json(%{error: "вы не можете удалить эту комнату"})
+
+      {:error, reason} ->
+        IO.inspect(reason)
+        conn |> put_status(400) |> json(%{error: "ошибка удаления комнаты", description: reason})
+    end
+  end
 end
